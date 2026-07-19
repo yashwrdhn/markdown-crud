@@ -1,4 +1,4 @@
-package com.mvp.markdown.service;
+package com.mvp.markdown.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
