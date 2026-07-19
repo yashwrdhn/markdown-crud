@@ -17,7 +17,7 @@ class MarkdownParserTest {
     }
 
     private Document createDoc(String content) {
-        return new Document(UUID.randomUUID(), Paths.get("test.md"), content);
+        return new Document(UUID.randomUUID(), Paths.get("./test.md"), content);
     }
 
     @Test
