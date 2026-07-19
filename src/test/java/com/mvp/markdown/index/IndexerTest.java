@@ -72,6 +72,6 @@ class IndexerTest {
 
         assertThat(result.getUuid()).isEqualTo(docUuid);
         assertThat(result.getPath().toString()).contains("my-document.md");
-        assertThat(result.getSearchWords()).isEqualTo("Content here");
+        assertThat(result.getSearchText()).isEqualTo("Content here");
     }
 }

@@ -1,7 +1,6 @@
 package com.mvp.markdown.index;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.UUID;
 
 public class DocumentMetadata {
@@ -9,7 +8,7 @@ public class DocumentMetadata {
     private final Path path;
     private final UUID uuid;
     private final int wordCount;
-    private final String searchWords;
+    private final String searchText;
 
 
     public DocumentMetadata(String title, Path path, UUID uuid, int wordCount, String searchWords) {
@@ -17,13 +16,13 @@ public class DocumentMetadata {
         this.path = path;
         this.uuid = uuid;
         this.wordCount = wordCount;
-        this.searchWords = searchWords;
+        this.searchText = searchWords;
     }
 
     public String getTitle() { return title; }
     public Path getPath() { return path; }
     public UUID getUuid() { return uuid; }
     public int getWordCount() { return wordCount; }
-    public String getSearchWords() { return searchWords; }
+    public String getSearchText() { return searchText; }
 
 }

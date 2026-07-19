@@ -1,10 +1,11 @@
-# Alexandria
+storage/
+Raw markdown persistence
 
-Storage is complete.
+parser/
+Markdown → semantic model
 
-## Parser
+index/
+Semantic model → metadata
 
-Supports markdown parsing.
-
-```java
-System.out.println();
+repository/
+Metadata ↔ PostgreSQL
