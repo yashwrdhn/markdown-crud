@@ -1,5 +1,7 @@
 package com.mvp.markdown.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -18,6 +20,14 @@ public class SidecarMetadataStore implements MetadataStore {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private static Logger log = LoggerFactory.getLogger(SidecarMetadataStore.class);
+
+    @Override
+    public boolean exists(Path markdownFile) throws IOException {
+        Path metaPath = markdownFile.resolveSibling(markdownFile.getFileName().toString() + ".meta.json");
+        return Files.exists(metaPath) ;
+    }
 
     @Override
     public UUID read(Path markdownFile) throws IOException {
@@ -52,11 +62,43 @@ public class SidecarMetadataStore implements MetadataStore {
     }
 
     @Override
-    public void delete(Path markdownFile) throws IOException {}
+    public void delete(Path markdownFile) throws IOException {
+        Path metaPath = markdownFile.resolveSibling(markdownFile.getFileName().toString() + ".meta.json");
+
+        // deleteIfExists returns true if the file existed and was deleted
+        // It returns false if the file was not found
+        boolean deleted = Files.deleteIfExists(metaPath);
+
+        if (deleted) {
+            log.info("Deleted: {}", metaPath);
+        } else {
+            log.warn("File not found, nothing to delete: {}", metaPath);
+        }
+
+    }
 
     @Override
     public void rename(Path oldMarkdownFile, Path newMarkdownFile) throws IOException {
+        Path source = oldMarkdownFile.resolveSibling(oldMarkdownFile.getFileName().toString() + ".meta.json");
+        Path target = newMarkdownFile.resolveSibling(newMarkdownFile.getFileName().toString() + ".meta.json");
 
+        // 1. Check if source exists
+        if (Files.notExists(source)) {
+            throw new java.nio.file.NoSuchFileException(source.toString(), null, "Source file does not exist.");
+        }
+
+        // 2. Check if target already exists
+        if (Files.exists(target)) {
+            throw new java.nio.file.FileAlreadyExistsException(target.toString(), null, "Target file name already exists.");
+        }
+
+        Path targetParent = target.getParent();
+        if (targetParent != null && Files.notExists(targetParent)) {
+            Files.createDirectories(targetParent);
+        }
+
+        // 3. Perform the move
+        Files.move(source, target);
     }
 
 

@@ -9,4 +9,5 @@ public interface MetadataStore {
     void write(Path markdownFile, UUID uuid) throws IOException;
     void delete(Path markdownFile) throws IOException;
     void rename(Path oldMarkdownFile, Path newMarkdownFile) throws IOException;
+    boolean exists(Path markdownFile) throws IOException;
 }
