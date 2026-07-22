@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ class DocumentRepositoryIntegrationTest {
 
     @BeforeEach
     void setUp() {
-
+        System.setProperty("user.timezone","Asia/Kolkata");
 
         // Ensures the table exists in your local environment before executing tests
         jdbcTemplate.execute("""
@@ -45,6 +46,10 @@ class DocumentRepositoryIntegrationTest {
                 search_vector TSVECTOR
             );
         """);
+
+        jdbcTemplate.update("""
+                TRUNCATE TABLE documents
+                """);
     }
 
     @Test
@@ -113,5 +118,29 @@ class DocumentRepositoryIntegrationTest {
         repository.delete(docId);
 
         assertThat(repository.findByUuid(docId)).isEmpty();
+    }
+
+    @Test
+    void shouldReturnDocumentBasedOnSearchQuery(){
+        UUID docId = UUID.randomUUID();
+        DocumentMetadata metadata = new DocumentMetadata(
+                "To Delete", Path.of("/delete.md"), docId, 5, "Some content"
+        );
+        repository.save(metadata);
+        List<DocumentMetadata> docs = repository.search("content");
+        assertThat(docs).hasSize(1);
+        assertThat(docs.getFirst().getUuid()).isEqualTo(docId);
+    }
+
+    @Test
+    void shouldReturnZeroDocumentsBasedOnNonExistentSearchQuery(){
+        UUID docId = UUID.randomUUID();
+        DocumentMetadata metadata = new DocumentMetadata(
+                "To Delete", Path.of("/delete.md"), docId, 5, "Some content"
+        );
+        repository.save(metadata);
+        List<DocumentMetadata> docs = repository.search("this text doesnt exist");
+        assertThat(docs).isEmpty();
+
     }
 }

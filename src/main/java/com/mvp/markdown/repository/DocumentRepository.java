@@ -100,4 +100,18 @@ public class DocumentRepository {
 
         return results.stream().findFirst();
     }
+
+    public List<DocumentMetadata> search(String searchQuery) {
+        String sql = """
+                SELECT
+                    uuid,
+                    path,
+                    title,
+                    word_count,
+                    search_text
+                FROM documents
+                WHERE search_vector @@ plainto_tsquery('english', ?)
+                """;
+        return jdbcTemplate.query(sql, DOCUMENT_METADATA_ROW_MAPPER, searchQuery);
+    }
 }
