@@ -1,4 +1,9 @@
 ## We are building Alexandria, a local-first knowledge management backend. 
+
+
+Our next focus is to turn Alexandria into a usable backend rather than adding new architecture. The plan is to expose the existing functionality through REST APIs, ingest a realistic Markdown vault to populate PostgreSQL with real data, validate and refine full-text search, then implement an inverted index from scratch separately as a learning exercise to compare it with PostgreSQL FTS. After that, we'll add WikiLink parsing, link resolution, and backlinks so the knowledge graph formed by Markdown documents becomes navigable. This will give us a complete, practical Markdown backend before moving on to the AI layer.
+
+
 storage/
 Raw markdown persistence
 
