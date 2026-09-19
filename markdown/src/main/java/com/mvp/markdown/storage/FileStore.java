@@ -1,6 +1,7 @@
 package com.mvp.markdown.storage;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 public interface FileStore {
@@ -11,11 +12,12 @@ public interface FileStore {
 
     void writeFile(Path path, String content) throws IOException;
 
-    void deleteFile(Path path) throws IOException;
+    boolean deleteFile(Path path) throws IOException;
 
     void move(Path source, Path target) throws IOException;
 
     boolean exists(Path path);
 
-    void createDirectories(Path path) throws IOException;
+    void createDirectory(Path path) throws IOException;
+
 }

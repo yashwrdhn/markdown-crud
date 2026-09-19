@@ -1,16 +1,15 @@
-package com.mvp.markdown.repository;
+package com.mvp.repository;
 
 import com.mvp.markdown.index.DocumentMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+
 public class DocumentRepository {
 
     private final JdbcTemplate jdbcTemplate;

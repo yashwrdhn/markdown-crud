@@ -18,6 +18,10 @@
     <modules>
         <module>markdown</module>
         <module>mcp</module>
+        <module>intelligence</module>
+        <module>app</module>
     </modules>
+
+
 
 </project>

@@ -1,12 +1,11 @@
 package com.mvp.markdown.parser;
 import com.mvp.markdown.storage.Document;
-import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Service
+
 public class MarkdownParser {
 
     private static final Pattern HEADING_PATTERN = Pattern.compile("^(#{1,6})\\s+(.*)");

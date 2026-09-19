@@ -1,10 +1,8 @@
 package com.mvp.markdown.index;
 
-import com.mvp.markdown.parser.Heading;
 import com.mvp.markdown.parser.ParsedDocument;
-import org.springframework.stereotype.Service;
 
-@Service
+
 public class Indexer {
 
     public DocumentMetadata index(ParsedDocument document) {

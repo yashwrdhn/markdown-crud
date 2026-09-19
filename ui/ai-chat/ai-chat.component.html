@@ -1,0 +1,94 @@
+<!-- Closed state: just a quiet trigger. Swap the label/markup here for
+     whatever launcher fits your parent layout — an icon button, a nav
+     item, etc. Its only job is calling open(). -->
+<button
+    *ngIf="!isOpen"
+    type="button"
+    class="trigger"
+    (click)="open()">
+    <span class="trigger-dot"></span>
+    Ask anything
+</button>
+
+<!-- Open state: fixed full-viewport room. -->
+<div
+    *ngIf="isOpen"
+    class="room"
+    [class.has-messages]="hasMessages">
+
+    <button
+        type="button"
+        class="leave"
+        (click)="close()"
+        aria-label="Leave">
+        esc
+    </button>
+
+    <div class="room-inner">
+
+        <div class="empty-state" *ngIf="!hasMessages">
+            <div class="orb"></div>
+            <h1 class="greeting">What's on your mind?</h1>
+            <p class="quote">{{ quote }}</p>
+        </div>
+
+        <div class="messages" *ngIf="hasMessages">
+
+            <div
+                *ngFor="let message of messages"
+                class="message"
+                [class.user]="message.role === 'user'"
+                [class.assistant]="message.role === 'assistant'">
+
+                <div class="label">
+                    {{ message.role === 'user' ? 'You' : 'Claude' }}
+                </div>
+
+                <div class="content" *ngIf="message.role === 'user'">
+                    {{ message.content }}
+                </div>
+
+                <div
+                    class="content markdown"
+                    *ngIf="message.role === 'assistant'"
+                    [innerHTML]="renderedContent(message)">
+                </div>
+
+                <span
+                    class="cursor"
+                    *ngIf="loading && message.role === 'assistant' && message === messages[messages.length - 1]">
+                </span>
+
+            </div>
+
+            <div #scrollAnchor class="scroll-anchor"></div>
+
+        </div>
+
+        <form class="composer" (ngSubmit)="send()">
+
+            <textarea
+                #promptField
+                [(ngModel)]="prompt"
+                name="prompt"
+                rows="1"
+                placeholder="Ask anything…"
+                (keydown)="onComposerKeydown($event)">
+            </textarea>
+
+            <button
+                type="button"
+                class="send"
+                [class.stop]="loading"
+                (click)="loading ? stop() : send()"
+                [disabled]="!loading && !prompt.trim()"
+                [attr.aria-label]="loading ? 'Stop' : 'Send'">
+                <span *ngIf="!loading">↑</span>
+                <span *ngIf="loading" class="stop-icon"></span>
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

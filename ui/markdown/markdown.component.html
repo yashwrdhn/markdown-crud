@@ -1,0 +1,138 @@
+<div class="shell" [class.right-collapsed]="!rightOpen || toc.length === 0">
+
+  <!-- ░░░ FLOATING DRAWER BACKDROP ░░░ -->
+  <div class="drawer-backdrop" [class.visible]="leftOpen" (click)="leftOpen = false"></div>
+
+  <!-- ░░░ FLOATING DRAWER ░░░ -->
+  <aside class="drawer" [class.open]="leftOpen">
+    <div class="drawer-inner">
+
+      <div class="drawer-brand">
+        <span class="brand-dot"></span>
+        <span class="brand-label">Notes</span>
+        <button class="collapse-btn" (click)="leftOpen = false" title="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="file-list">
+        <button *ngFor="let file of files" class="file-item"
+          [class.active]="activeFile?.path === file.path && activeFile?.label === file.label"
+          (click)="selectFile(file)">
+          <span class="file-pip"></span>
+          <span class="file-label">{{ file.label }}</span>
+        </button>
+      </nav>
+
+      <!-- New note
+      <div class="new-note-area">
+        <div class="new-note-input-row" *ngIf="editingNewLabel">
+          <input #newLabelInput class="new-note-input" [(ngModel)]="newNoteLabel" placeholder="Note title…"
+            (keydown.enter)="confirmNewNote()" (keydown.escape)="cancelNewNote()" />
+          <button class="confirm-btn" (click)="confirmNewNote()">↵</button>
+        </div>
+        <button class="new-note-btn" *ngIf="!editingNewLabel" (click)="startNewNote()">
+          <span class="new-note-icon">+</span> New note
+        </button>
+      </div> -->
+
+    </div>
+  </aside>
+
+  <!-- ░░░ MAIN ░░░ -->
+  <div class="main">
+
+    <!-- View topbar -->
+    <header class="topbar" *ngIf="!isEditing">
+      <div class="topbar-left">
+        <button class="drawer-trigger" (click)="toggleDrawer()" title="Notes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <span class="topbar-title">{{ activeFile?.label ?? '' }}</span>
+      </div>
+      <div class="topbar-actions">
+        <!-- <button class="ghost-edit-btn" (click)="NewFile()">Create</button> -->
+        <button class="ghost-edit-btn" (click)="enterEdit()">Edit</button>
+      </div>
+    </header>
+
+    <!-- Edit toolbar -->
+    <div class="edit-toolbar" *ngIf="isEditing">
+      <div class="toolbar-left">
+        <button class="tool-btn" title="Bold" (click)="wrapSelection('**')">B</button>
+        <button class="tool-btn italic-btn" title="Italic" (click)="wrapSelection('*')">I</button>
+        <button class="tool-btn" title="H2" (click)="insertLine('## ')">H2</button>
+        <button class="tool-btn" title="H3" (click)="insertLine('### ')">H3</button>
+        <button class="tool-btn mono-btn" title="Inline code" (click)="wrapSelection('`')">{{ '{' }} {{ '}' }}</button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" title="Link" (click)="insertLink()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+        </button>
+        <button class="tool-btn" title="Image" (click)="insertImage()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <button class="tool-action discard" (click)="cancelEdit()">Discard</button>
+        <button class="tool-action save" (click)="saveEdit()">Save</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area">
+      <!-- VIEW -->
+      <div class="scroll-host" #scrollHost *ngIf="!isEditing">
+        <markdown [data]="markdown" class="md-preview" (ready)="onMarkdownReady()"></markdown>
+      </div>
+
+      <!-- EDIT -->
+      <div class="scroll-host edit-host" *ngIf="isEditing">
+        <textarea #editorTextarea class="md-editor" [(ngModel)]="editBuffer" spellcheck="false"
+          placeholder="Start writing…"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ░░░ RIGHT SIDEBAR — TOC ░░░ -->
+  <!-- <aside class="sidebar-right" *ngIf="toc.length > 0">
+    <div class="toc-inner">
+
+      <div class="toc-header">
+        <span class="toc-label">On this page</span>
+        <button class="collapse-btn" (click)="rightOpen = !rightOpen" title="Toggle">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <polyline *ngIf="rightOpen" points="9 18 15 12 9 6" />
+            <polyline *ngIf="!rightOpen" points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="toc-list" *ngIf="rightOpen">
+        <button *ngFor="let entry of toc" class="toc-item" [class.h3]="entry.level === 3"
+          [class.active]="entry.id === activeTocId" (click)="scrollToHeading(entry.id)">{{ entry.text }}</button>
+      </nav>
+
+    </div>
+  </aside> -->
+
+</div>

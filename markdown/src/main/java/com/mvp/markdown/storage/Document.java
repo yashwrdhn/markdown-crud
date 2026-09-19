@@ -1,6 +1,5 @@
 package com.mvp.markdown.storage;
 
-
 import java.nio.file.Path;
 import java.util.UUID;
 

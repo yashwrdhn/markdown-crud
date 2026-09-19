@@ -2,8 +2,7 @@ package com.mvp.markdown.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -14,12 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Component
+
 public class SidecarMetadataStore implements MetadataStore {
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static Logger log = LoggerFactory.getLogger(SidecarMetadataStore.class);
 
