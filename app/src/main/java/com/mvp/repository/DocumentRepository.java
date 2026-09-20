@@ -3,13 +3,14 @@ package com.mvp.repository;
 import com.mvp.markdown.index.DocumentMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@Repository
 public class DocumentRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -26,7 +27,7 @@ public class DocumentRepository {
             rs.getString("search_text")
     );
 
-    void save(DocumentMetadata documentMetadata) {
+    public void save(DocumentMetadata documentMetadata) {
         String sql = """
             INSERT INTO documents (
                 uuid,
@@ -47,6 +48,26 @@ public class DocumentRepository {
             documentMetadata.getSearchText(),
             documentMetadata.getSearchText()
         );
+    }
+
+    public void updatePath(UUID uuid, Path path) {
+        String sql = """
+            UPDATE documents
+            SET path = ?
+            WHERE uuid = ?
+            """;
+
+        int rows = jdbcTemplate.update(
+                sql,
+                path.toString(),
+                uuid
+        );
+
+        if (rows == 0) {
+            throw new IllegalStateException(
+                    "Document not found: " + uuid
+            );
+        }
     }
 
     void update(DocumentMetadata documentMetadata) {
@@ -75,7 +96,7 @@ public class DocumentRepository {
         }
     }
 
-    void delete(UUID uuid) {
+    public void delete(UUID uuid) {
         String sql = """
                 DELETE FROM documents
                 WHERE uuid = ?

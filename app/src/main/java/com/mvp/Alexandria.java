@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @SpringBootApplication
 public class Alexandria {
     public static void main(String[] args) {
-
+        System.setProperty("user.timezone","Asia/Kolkata");
         SpringApplication.run(Alexandria.class, args);
     }
 
@@ -19,6 +19,7 @@ public class Alexandria {
 //
 //    @PostConstruct
 //    public void testConnection() {
+//
 //        System.out.println("Testing DB connection...");
 //        Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
 //        System.out.println("Connection successful! Result: " + result);
